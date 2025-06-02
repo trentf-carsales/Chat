@@ -58,6 +58,8 @@ public struct Message: Identifiable, Hashable, Sendable {
 
     public var triggerRedraw: UUID?
 
+    nonisolated(unsafe) public var userData: AnyHashable?
+
     public init(id: String,
                 user: User,
                 status: Status? = nil,
@@ -67,7 +69,8 @@ public struct Message: Identifiable, Hashable, Sendable {
                 giphyMediaId: String? = nil,
                 reactions: [Reaction] = [],
                 recording: Recording? = nil,
-                replyMessage: ReplyMessage? = nil) {
+                replyMessage: ReplyMessage? = nil,
+                userData: AnyHashable? = nil) {
 
         self.id = id
         self.user = user
@@ -79,6 +82,7 @@ public struct Message: Identifiable, Hashable, Sendable {
         self.reactions = reactions
         self.recording = recording
         self.replyMessage = replyMessage
+        self.userData = userData
     }
 
     public static func makeMessage(
