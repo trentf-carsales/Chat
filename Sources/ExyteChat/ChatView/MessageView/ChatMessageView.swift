@@ -27,14 +27,29 @@ struct ChatMessageView<MessageContent: View>: View {
     var body: some View {
         Group {
             if let messageBuilder = messageBuilder {
-                messageBuilder(
-                    row.message,
-                    row.positionInUserGroup,
-                    row.commentsPosition,
-                    { viewModel.messageMenuRow = row },
-                    viewModel.messageMenuAction()) { attachment in
-                        self.viewModel.presentAttachmentFullScreen(attachment)
-                    }
+                MessageView(
+                    viewModel: viewModel,
+                    message: row.message,
+                    positionInUserGroup: row.positionInUserGroup,
+                    chatType: chatType,
+                    avatarSize: avatarSize,
+                    tapAvatarClosure: tapAvatarClosure,
+                    messageUseMarkdown: messageUseMarkdown,
+                    isDisplayingMessageMenu: isDisplayingMessageMenu,
+                    showMessageTimeView: showMessageTimeView,
+                    messageBuilder: {
+                        AnyView(
+                            messageBuilder(
+                                row.message,
+                                row.positionInUserGroup,
+                                row.commentsPosition,
+                                { viewModel.messageMenuRow = row },
+                                viewModel.messageMenuAction()) { attachment in
+                                    self.viewModel.presentAttachmentFullScreen(attachment)
+                                }
+                        )
+                    },
+                    font: messageFont)
             } else {
                 MessageView(
                     viewModel: viewModel,
@@ -46,6 +61,7 @@ struct ChatMessageView<MessageContent: View>: View {
                     messageUseMarkdown: messageUseMarkdown,
                     isDisplayingMessageMenu: isDisplayingMessageMenu,
                     showMessageTimeView: showMessageTimeView,
+                    messageBuilder: nil,
                     font: messageFont)
             }
         }

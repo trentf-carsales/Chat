@@ -21,6 +21,7 @@ struct MessageView: View {
     let messageUseMarkdown: Bool
     let isDisplayingMessageMenu: Bool
     let showMessageTimeView: Bool
+    let messageBuilder: (() -> AnyView)?
 
     @State var avatarViewSize: CGSize = .zero
     @State var statusSize: CGSize = .zero
@@ -210,9 +211,18 @@ struct MessageView: View {
 
     @ViewBuilder
     func textWithTimeView(_ message: Message) -> some View {
-        let messageView = MessageTextView(text: message.text, messageUseMarkdown: messageUseMarkdown)
+        let standardMessageView = MessageTextView(text: message.text, messageUseMarkdown: messageUseMarkdown)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, MessageView.horizontalTextPadding)
+
+        let customView = messageBuilder?()
+        let messageView = customView != nil ? AnyView(
+            customView!
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, MessageView.horizontalTextPadding)
+        ) : AnyView(standardMessageView)
+
+        let dateArrangement = customView != nil ? .vstack : self.dateArrangement
 
         let timeView = messageTimeView()
             .padding(.trailing, 12)
@@ -308,11 +318,11 @@ struct MessageView_Preview: PreviewProvider {
         status: .read,
         text: longMessage,
         attachments: [
-            Attachment.randomImage(),
-            Attachment.randomImage(),
-            Attachment.randomImage(),
-            Attachment.randomImage(),
-            Attachment.randomImage(),
+//            Attachment.randomImage(),
+//            Attachment.randomImage(),
+//            Attachment.randomImage(),
+//            Attachment.randomImage(),
+//            Attachment.randomImage(),
         ]
     )
 
@@ -338,6 +348,7 @@ struct MessageView_Preview: PreviewProvider {
                 messageUseMarkdown: false,
                 isDisplayingMessageMenu: false,
                 showMessageTimeView: true,
+                messageBuilder: { AnyView(Text("Test")) },
                 font: UIFontMetrics.default.scaledFont(for: UIFont.systemFont(ofSize: 15))
             )
         }
